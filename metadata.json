@@ -1,0 +1,6 @@
+{
+  "name": "EthioGPT",
+  "description": "Your Ethiopian AI Assistant supporting Amharic, Afaan Oromo, Tigrinya, and English with smart chat, translation, education, business, and multimodal tools.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

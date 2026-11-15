@@ -1,0 +1,165 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated EthioGPT user profile and preferences. Clients must write FieldValue.serverTimestamp() for createdAt and updatedAt.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated Firebase UID matching request.auth.uid."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User display name from Google Sign-In or profile editor."
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address (optional, isolated to owner)."
+        },
+        "preferredLanguage": {
+          "type": "string",
+          "enum": ["en", "am", "om", "ti", "so"],
+          "description": "Default AI conversation language code."
+        },
+        "themeMode": {
+          "type": "string",
+          "enum": ["system", "light", "dark"],
+          "description": "User-selected UI theme preference."
+        },
+        "voiceAutoSpeak": {
+          "type": "boolean",
+          "description": "Whether AI replies are automatically spoken via TextToSpeech."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of profile creation (FieldValue.serverTimestamp())."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last profile update (FieldValue.serverTimestamp())."
+        }
+      },
+      "required": [
+        "userId",
+        "displayName",
+        "preferredLanguage",
+        "themeMode",
+        "voiceAutoSpeak",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "A saved EthioGPT chat thread belonging to a specific user.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner Firebase UID."
+        },
+        "title": {
+          "type": "string",
+          "description": "Conversation title."
+        },
+        "toolMode": {
+          "type": "string",
+          "enum": ["general", "translator", "tutor", "business", "coder", "culture", "vision"],
+          "description": "Active EthioGPT AI tool specialization."
+        },
+        "language": {
+          "type": "string",
+          "enum": ["en", "am", "om", "ti", "so"],
+          "description": "Active language mode for the conversation."
+        },
+        "lastMessagePreview": {
+          "type": "string",
+          "description": "Short preview of the most recent message."
+        },
+        "messageCount": {
+          "type": "integer",
+          "description": "Total number of messages in the conversation."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of conversation creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of latest conversation activity."
+        }
+      },
+      "required": [
+        "userId",
+        "title",
+        "toolMode",
+        "language",
+        "lastMessagePreview",
+        "messageCount",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Individual user or AI model message inside a conversation.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner Firebase UID."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["user", "model"],
+          "description": "Sender role."
+        },
+        "text": {
+          "type": "string",
+          "description": "Message body text."
+        },
+        "toolMode": {
+          "type": "string",
+          "enum": ["general", "translator", "tutor", "business", "coder", "culture", "vision"],
+          "description": "Tool mode active when message was created."
+        },
+        "hasImage": {
+          "type": "boolean",
+          "description": "Whether the user attached an image to this turn."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when message was persisted."
+        }
+      },
+      "required": [
+        "userId",
+        "role",
+        "text",
+        "toolMode",
+        "hasImage",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Authenticated user profile and settings document."
+    },
+    "/users/{userId}/conversations/{conversationId}": {
+      "schema": { "$ref": "#/entities/Conversation" },
+      "description": "User-scoped AI chat conversations."
+    },
+    "/users/{userId}/conversations/{conversationId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/ChatMessage" },
+      "description": "Messages belonging to a user's conversation."
+    }
+  }
+}
