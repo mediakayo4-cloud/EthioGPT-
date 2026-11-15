@@ -6,30 +6,56 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   build:
+    name: Build Android APK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      # 1. Download project
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # 2. Install Java
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
+      # 3. Setup Gradle
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.3.1'
 
-      - name: Build APK
-        run: gradle assembleDebug
+      # 4. Check project files
+      - name: Check Project
+        run: |
+          ls -la
+          ls -la app
 
-      - name: Upload APK
+      # 5. Build Debug APK
+      - name: Build EthioGPT
+        run: |
+          gradle assembleDebug --stacktrace
+
+      # 6. Upload APK
+      - name: Upload EthioGPT APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: EthioGPT-APK
           path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 7
+
+      # 7. Show errors if build fails
+      - name: Build Error Report
+        if: failure()
+        run: |
+          echo "EthioGPT build failed."
+          echo "Check the Build EthioGPT logs above."
